@@ -43,6 +43,7 @@ enum planck_keycodes
 #define LWR_KCJ LT(_LOWER, KC_J)
 #define RSE_SCLN LT(_RAISE, KC_SCLN)
 #define RSE_KCA LT(_RAISE, KC_A)
+#define ADJ_BKSP LT(_ADJUST, KC_BSPC)
 #define CMD_ENT SGUI(KC_ENT)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -55,14 +56,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Shift |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Brite| Ctrl | Alt  | GUI  |Lower | Enter|Space |Raise | Left | Down |  Up  |Right |
+ * | Brite| Ctrl | Alt  | GUI  |    Enter    |    Space    | Left | Down |  Up  |Right |
  * `-----------------------------------------------------------------------------------'
  */
     [_QWERTY] = LAYOUT_planck_grid(
-        KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_BSPC,
-        ESC_CTL, RSE_KCA, KC_S, KC_D, LWR_KCF, KC_G, KC_H, LWR_KCJ, KC_K, KC_L, RSE_SCLN, RGUI_T(KC_QUOT),
+        KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, ADJ_BKSP,
+        ESC_CTL, KC_A, KC_S, KC_D, LWR_KCF, KC_G, KC_H, LWR_KCJ, KC_K, KC_L, RSE_SCLN, RGUI_T(KC_QUOT),
         KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT,
-        CMD_ENT, KC_LCTL, KC_LALT, KC_LGUI, LOWER, KC_ENT, KC_SPC, RAISE, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT),
+        CMD_ENT, KC_LCTL, KC_LALT, KC_LGUI, KC_NO, KC_ENT, KC_NO, KC_SPC, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT),
 
     /* Lower
  * ,-----------------------------------------------------------------------------------.
@@ -72,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * |      |  =>  |      |  [   |  ]   |     |     |   _  |   +  |  |   | Home  |  End  |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
+ * |      |      |      |      |             |             | Next | Vol- | Vol+ | Play |
  * `-----------------------------------------------------------------------------------'
  */
 
@@ -90,7 +91,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * |      |      |      |      |      |      |      |  1   |  2   |  3   |     |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
+ * |      |      |      |      |             |             | Next | Vol- | Vol+ | Play |
  * `-----------------------------------------------------------------------------------'
  */
     [_RAISE] = LAYOUT_planck_grid(
@@ -103,11 +104,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * |      | Reset|      |      |      |      |      |      |      |      |      |  Del |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |      |      |      |Aud on|Audoff|AGnorm|AGswap|Qwerty|Colemk|Dvorak|Plover|      |
+ * |      |      |      |Aud on|Audoff|AGnorm|AGswap|Qwerty|      |      |      |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * |      |Voice-|Voice+|Mus on|Musoff|MIDIon|MIDIof|      |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |             |      |      |      |      |      |
+ * |      |      |      |      |             |             |      |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
     [_ADJUST] = LAYOUT_planck_grid(
