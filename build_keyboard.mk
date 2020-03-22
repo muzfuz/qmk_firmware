@@ -98,31 +98,38 @@ MAIN_KEYMAP_PATH_3 := $(KEYBOARD_PATH_3)/keymaps/$(KEYMAP)
 MAIN_KEYMAP_PATH_4 := $(KEYBOARD_PATH_4)/keymaps/$(KEYMAP)
 MAIN_KEYMAP_PATH_5 := $(KEYBOARD_PATH_5)/keymaps/$(KEYMAP)
 
-ifneq ("$(wildcard $(MAIN_KEYMAP_PATH_5)/keymap.c)","")
-    -include $(MAIN_KEYMAP_PATH_5)/rules.mk
-    KEYMAP_C := $(MAIN_KEYMAP_PATH_5)/keymap.c
-    KEYMAP_PATH := $(MAIN_KEYMAP_PATH_5)
-else ifneq ("$(wildcard $(MAIN_KEYMAP_PATH_4)/keymap.c)","")
-    -include $(MAIN_KEYMAP_PATH_4)/rules.mk
-    KEYMAP_C := $(MAIN_KEYMAP_PATH_4)/keymap.c
-    KEYMAP_PATH := $(MAIN_KEYMAP_PATH_4)
-else ifneq ("$(wildcard $(MAIN_KEYMAP_PATH_3)/keymap.c)","")
-    -include $(MAIN_KEYMAP_PATH_3)/rules.mk
-    KEYMAP_C := $(MAIN_KEYMAP_PATH_3)/keymap.c
-    KEYMAP_PATH := $(MAIN_KEYMAP_PATH_3)
-else ifneq ("$(wildcard $(MAIN_KEYMAP_PATH_2)/keymap.c)","")
-    -include $(MAIN_KEYMAP_PATH_2)/rules.mk
-    KEYMAP_C := $(MAIN_KEYMAP_PATH_2)/keymap.c
-    KEYMAP_PATH := $(MAIN_KEYMAP_PATH_2)
-else ifneq ("$(wildcard $(MAIN_KEYMAP_PATH_1)/keymap.c)","")
-    -include $(MAIN_KEYMAP_PATH_1)/rules.mk
-    KEYMAP_C := $(MAIN_KEYMAP_PATH_1)/keymap.c
-    KEYMAP_PATH := $(MAIN_KEYMAP_PATH_1)
-else ifneq ($(LAYOUTS),)
-    include build_layout.mk
-else
-    $(error Could not find keymap)
-    # this state should never be reached
+# Check for keymap.json first, so we can regenerate keymap.c
+include build_json.mk
+
+ifeq ("$(wildcard $(KEYMAP_PATH))", "")
+    # Look through the possible keymap folders until we find a matching keymap.c
+    ifneq ("$(wildcard $(MAIN_KEYMAP_PATH_5)/keymap.c)","")
+        -include $(MAIN_KEYMAP_PATH_5)/rules.mk
+        KEYMAP_C := $(MAIN_KEYMAP_PATH_5)/keymap.c
+        KEYMAP_PATH := $(MAIN_KEYMAP_PATH_5)
+    else ifneq ("$(wildcard $(MAIN_KEYMAP_PATH_4)/keymap.c)","")
+        -include $(MAIN_KEYMAP_PATH_4)/rules.mk
+        KEYMAP_C := $(MAIN_KEYMAP_PATH_4)/keymap.c
+        KEYMAP_PATH := $(MAIN_KEYMAP_PATH_4)
+    else ifneq ("$(wildcard $(MAIN_KEYMAP_PATH_3)/keymap.c)","")
+        -include $(MAIN_KEYMAP_PATH_3)/rules.mk
+        KEYMAP_C := $(MAIN_KEYMAP_PATH_3)/keymap.c
+        KEYMAP_PATH := $(MAIN_KEYMAP_PATH_3)
+    else ifneq ("$(wildcard $(MAIN_KEYMAP_PATH_2)/keymap.c)","")
+        -include $(MAIN_KEYMAP_PATH_2)/rules.mk
+        KEYMAP_C := $(MAIN_KEYMAP_PATH_2)/keymap.c
+        KEYMAP_PATH := $(MAIN_KEYMAP_PATH_2)
+    else ifneq ("$(wildcard $(MAIN_KEYMAP_PATH_1)/keymap.c)","")
+        -include $(MAIN_KEYMAP_PATH_1)/rules.mk
+        KEYMAP_C := $(MAIN_KEYMAP_PATH_1)/keymap.c
+        KEYMAP_PATH := $(MAIN_KEYMAP_PATH_1)
+    else ifneq ($(LAYOUTS),)
+        # If we haven't found a keymap yet fall back to community layouts
+        include build_layout.mk
+    else
+        $(error Could not find keymap)
+        # this state should never be reached
+    endif
 endif
 
 ifeq ($(strip $(CTPC)), yes)
@@ -224,13 +231,16 @@ endif
 # We can assume a ChibiOS target When MCU_FAMILY is defined since it's
 # not used for LUFA
 ifdef MCU_FAMILY
-    FIRMWARE_FORMAT?=bin
     PLATFORM=CHIBIOS
+    PLATFORM_KEY=chibios
+    FIRMWARE_FORMAT?=bin
 else ifdef ARM_ATSAM
     PLATFORM=ARM_ATSAM
+    PLATFORM_KEY=arm_atsam
     FIRMWARE_FORMAT=bin
 else
     PLATFORM=AVR
+    PLATFORM_KEY=avr
     FIRMWARE_FORMAT?=hex
 endif
 
@@ -313,7 +323,6 @@ ifneq ("$(wildcard $(USER_PATH)/config.h)","")
     CONFIG_H += $(USER_PATH)/config.h
 endif
 
-
 # Object files directory
 #     To put object files in current directory, use a dot (.), do NOT make
 #     this an empty or blank macro!
@@ -323,7 +332,7 @@ ifneq ("$(wildcard $(KEYMAP_PATH)/config.h)","")
     CONFIG_H += $(KEYMAP_PATH)/config.h
 endif
 
-# # project specific files
+# project specific files
 SRC += $(KEYBOARD_SRC) \
     $(KEYMAP_C) \
     $(QUANTUM_SRC)
@@ -392,6 +401,7 @@ $(KEYBOARD_OUTPUT)_CONFIG := $(PROJECT_CONFIG)
 all: build check-size
 build: elf cpfirmware
 check-size: build
+objs-size: build
 
 include show_options.mk
 include $(TMK_PATH)/rules.mk
